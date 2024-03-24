@@ -4,7 +4,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 function getRandomXOrO() {
   // Generate a random number (0 or 1)
   const randomNum = Math.floor(Math.random() * 2);
@@ -17,7 +17,7 @@ const randomSymbol = getRandomXOrO();
 
 type boxesNumberType = {
   boxNo: number;
-  chance: "X" | "0" | null;
+  chance: "X" | "O" | null;
 };
 
 export default function Home() {
@@ -47,6 +47,7 @@ export default function Home() {
     [3, 5, 7]
   ];
 
+  const [animationParent] = useAutoAnimate();
   const [boxes, setBoxes] = useState<boxesNumberType[]>(boxesNumber);
   const [currentChance, setCurrentChance] = useState(randomSymbol);
   const [xChances, setXChances] = useState<number[]>([]);
@@ -103,7 +104,7 @@ export default function Home() {
     // zero chnace
     if (currentChance === "O") {
       const updatedBoxes: boxesNumberType[] = boxes.map((d) =>
-        d.boxNo == boxNumber ? { boxNo: boxNumber, chance: "0" } : d
+        d.boxNo == boxNumber ? { boxNo: boxNumber, chance: "O" } : d
       );
       setBoxes(updatedBoxes);
 
@@ -117,22 +118,32 @@ export default function Home() {
       <main className="w-full  max-w-[400px] flex flex-col gap-4">
         {/* chance */}
         <section className="flex justify-between  ">
-          <p className="text-2xl">
+          <p className="text-2xl flex items-center gap-1 ">
             <span>Chance : </span>
-            <span className="font-bold text-3xl text-blue-400">
+            <span
+              className={twMerge(
+                clsx(
+                  "font-bold text-3xl text-green-400",
+                  currentChance == "O" && "text-red-400"
+                )
+              )}
+            >
               {currentChance}
             </span>
           </p>
           <button
             onClick={handleReset}
-            className="bg-white text-black px-4 rounded font-semibold"
+            className=" text-white px-4  font-semibold rounded-xl border-2  shadow-sm hover:opacity-80 "
           >
             Rematch
           </button>
         </section>
 
         {/* boxes */}
-        <section className=" gap-2 grid grid-cols-3 w-full  max-w-[400px] h-[400px]  ">
+        <section
+          ref={animationParent}
+          className=" relative gap-2 grid grid-cols-3 w-full  max-w-[400px] h-[400px]  "
+        >
           {boxes.map((d, i) => (
             <Box
               win={win}
@@ -144,12 +155,14 @@ export default function Home() {
               key={i}
             />
           ))}
-        </section>
-        {/* winners */}
-        <section className="text-3xl">
-          {win === "O" && <p> 0 Win </p>}
-          {win === "X" && <p> X Win </p>}
-          {win === "Draw" && <p> Draw </p>}
+          {/* winners */}
+          {win && (
+            <section className="text-3xl absolute -bottom-16 left-0 ">
+              {win === "O" && <p> O Win </p>}
+              {win === "X" && <p> X Win </p>}
+              {win === "Draw" && <p> Draw </p>}
+            </section>
+          )}
         </section>
       </main>
     </div>
@@ -165,7 +178,7 @@ function Box({
   win
 }: {
   boxNumber: number;
-  chance: "X" | "0" | null;
+  chance: "X" | "O" | null;
   win: "X" | "O" | "Draw" | null;
   xChances: number[];
   ZeroChances: number[];
@@ -186,9 +199,9 @@ function Box({
       onClick={handleClick}
       className={twMerge(
         clsx(
-          "min-w-32 min-h-32  rounded-md bg-white text-black  flex items-center justify-center text-4xl font-bold  border-4 border-transparent   ",
+          "min-w-32 min-h-32  rounded-2xl    flex items-center justify-center text-6xl   border-2  text-green-400 border-transparent  transition-all  font-semibold  bg-gradient-to-b from-green-50/20 border-green-200 ",
           btnDisabled && "cursor-not-allowed",
-          chance == "X" && "text-blue-400  border-blue-400 "
+          chance == "O" && "text-red-400  border-red-400 "
         )
       )}
     >
