@@ -80,7 +80,7 @@ export default function Home() {
       setWin("X");
     }
     if (ZeroWin) {
-      setWin("0");
+      setWin("O");
     }
     if (!xWin && !ZeroWin && allBoxesFill) {
       setWin("Draw");
