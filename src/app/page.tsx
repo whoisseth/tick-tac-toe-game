@@ -51,7 +51,7 @@ export default function Home() {
   const [currentChance, setCurrentChance] = useState(randomSymbol);
   const [xChances, setXChances] = useState<number[]>([]);
   const [ZeroChances, setZeroChances] = useState<number[]>([]);
-  const [win, setWin] = useState<"X" | "0" | "Draw" | null>(null);
+  const [win, setWin] = useState<"X" | "O" | "Draw" | null>(null);
 
   function checkWinningCondition(array: number[]) {
     for (const winState of winingStates) {
@@ -89,6 +89,7 @@ export default function Home() {
 
   function handleOnClickBox(boxNumber: number) {
     // x chnace
+    console.log("boxNumber ,currentChance", boxNumber, currentChance);
     if (currentChance === "X") {
       const updatedBoxes: boxesNumberType[] = boxes.map((d) =>
         d.boxNo == boxNumber ? { boxNo: boxNumber, chance: "X" } : d
@@ -96,11 +97,11 @@ export default function Home() {
       setBoxes(updatedBoxes);
 
       setXChances([...xChances, boxNumber]);
-      setCurrentChance("0");
+      setCurrentChance("O");
     }
 
     // zero chnace
-    if (currentChance === "0") {
+    if (currentChance === "O") {
       const updatedBoxes: boxesNumberType[] = boxes.map((d) =>
         d.boxNo == boxNumber ? { boxNo: boxNumber, chance: "0" } : d
       );
@@ -146,7 +147,7 @@ export default function Home() {
         </section>
         {/* winners */}
         <section className="text-3xl">
-          {win === "0" && <p> 0 Win </p>}
+          {win === "O" && <p> 0 Win </p>}
           {win === "X" && <p> X Win </p>}
           {win === "Draw" && <p> Draw </p>}
         </section>
@@ -165,7 +166,7 @@ function Box({
 }: {
   boxNumber: number;
   chance: "X" | "0" | null;
-  win: "X" | "0" | "Draw" | null;
+  win: "X" | "O" | "Draw" | null;
   xChances: number[];
   ZeroChances: number[];
   handleOnClickBox: (boxNumber: number) => void;
